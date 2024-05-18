@@ -1,10 +1,27 @@
 import { Request, Response } from 'express';
 import { CarsModel, Car } from '../models/car';
 
+
 export const getCars = async (_: Request, res: Response) => {
   try {
     const cars = await CarsModel.query();
+    if (!cars) {
+      return res.status(404).json({ error: 'Cars not found' });
+    }
     return res.json(cars);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getCarsById = async (req: Request, res: Response) => {
+  try {
+    const id = +req.params.id;
+    const car = await CarsModel.query().findById(id);
+    if (!car) {
+      return res.status(404).json({ error: 'Car not found' });
+    }
+    return res.json(car);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
